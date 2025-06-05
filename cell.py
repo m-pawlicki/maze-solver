@@ -1,4 +1,5 @@
 from graphics import *
+from cell import *
 
 class Cell:
     def __init__(self, win: Window):
@@ -31,4 +32,19 @@ class Cell:
             self.__win.draw_line(line)
 
     def draw_move(self, to_cell, undo=False):
-        pass
+        color = "red"
+        if undo:
+            color = "gray"
+        start_half_len = abs(self.__x2 - self.__x1) // 2
+        start_x_center = self.__x1 + start_half_len
+        start_y_center = self.__y1 + start_half_len
+
+        end_half_len = abs(to_cell.__x2 - to_cell.__x1) // 2
+        end_x_center = to_cell.__x1 + end_half_len
+        end_y_center = to_cell.__y1 + end_half_len
+
+        start = Point(start_x_center, start_y_center)
+        end = Point(end_x_center,end_y_center)
+        
+        line = Line(start, end)
+        self.__win.draw_line(line, color)
