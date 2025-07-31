@@ -11,27 +11,43 @@ class Maze:
         num_cols,
         cell_size_x,
         cell_size_y,
-        win,
+        win: Window = None,
     ):
-        self.x1 = x1
-        self.y1 = y1
-        self.num_rows = num_rows
-        self.num_cols = num_cols
-        self.cell_size_x = cell_size_x
-        self.cell_size_y = cell_size_y
-        self.win = win
+        self.__x1 = x1
+        self.__y1 = y1
+        self.__num_rows = num_rows
+        self.__num_cols = num_cols
+        self.__cell_size_x = cell_size_x
+        self.__cell_size_y = cell_size_y
+        self.__win = win
         self.__cells = []
         self.__create_cells()
 
     def __create_cells(self):
-        #fill in _cells, 2d list of Cells
-        pass
+        for i in range(self.__num_cols):
+            cols = []
+            for j in range(self.__num_rows):
+                cols.append(Cell(self.__win))
+            self.__cells.append(cols)
+
+        for i in range(self.__num_cols):
+            for j in range(self.__num_rows):
+                self.__draw_cell(i,j)
 
     def __draw_cell(self, i, j):
+        if self.__win is None:
+            return
         #calculate x/y posi of cell based on i/j pos + cell size
-        Cell.draw()
+        x1 = self.__x1 + i * self.__cell_size_x
+        y1 = self.__y1 + j * self.__cell_size_y
+        x2 = x1 + self.__cell_size_x
+        y2 = y1 + self.__cell_size_x
+        cell = self.__cells[i][j]
+        cell.draw(x1, y1, x2, y2)
         self.__animate()
 
     def __animate(self):
-        self.win.redraw()
+        if self.__win is None:
+            return
+        self.__win.redraw()
         sleep(0.05)
