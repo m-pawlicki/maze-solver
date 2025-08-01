@@ -54,13 +54,13 @@ class Maze:
         y2 = y1 + self.__cell_size_x
         cell = self.__cells[i][j]
         cell.draw(x1, y1, x2, y2)
-        self.__animate()
+        self.__animate(0.005)
 
-    def __animate(self):
+    def __animate(self, delay=0):
         if self.__win is None:
             return
         self.__win.redraw()
-        sleep(0.005)
+        sleep(delay)
     
     def __break_entrance_and_exit(self):
         # Deletes top and bottom walls from the first and last cell respectively
