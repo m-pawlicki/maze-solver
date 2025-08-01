@@ -14,7 +14,7 @@ class Cell:
         self.__y2 = -1
         self.__win = win
 
-    def draw(self,x1 ,y1, x2, y2):
+    def draw(self, x1 ,y1, x2, y2):
         if self.__win is None:
             return
         self.__x1 = x1

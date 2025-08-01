@@ -28,6 +28,8 @@ class Maze:
 
         self.__cells = []
         self.__create_cells()
+        self.__break_entrance_and_exit()
+        self.__break_walls_r(0, 0)
 
     def __create_cells(self):
         for i in range(self.__num_cols):
@@ -35,8 +37,6 @@ class Maze:
             for j in range(self.__num_rows):
                 cols.append(Cell(self.__win))
             self.__cells.append(cols)
-
-        self.__break_entrance_and_exit()
 
         for i in range(self.__num_cols):
             for j in range(self.__num_rows):
@@ -69,11 +69,58 @@ class Maze:
     def __break_walls_r(self, i, j):
         cells = self.__cells
         cells[i][j].visited = True
+        offsets = [(0, 1), (0, -1), (1, 0), (-1, 0)]
         while True:
             to_visit = []
-            pass
+            for dx,dy in offsets:
+                x = i+dx
+                y = j+dy
+                if self.__is_valid_cell(x, y):
+                    to_visit.append((x, y))
+            if len(to_visit) == 0:
+                self.__draw_cell(i, j)
+                return
+            
+            choice = to_visit[random.randrange(len(to_visit))]
+            match self.__check_wall_side(i, j, choice[0], choice[1]):
+                case "up":
+                    cells[i][j].has_top_wall = False
+                    cells[choice[0]][choice[1]].has_bottom_wall = False
+                case "down":
+                    cells[i][j].has_bottom_wall = False
+                    cells[choice[0]][choice[1]].has_top_wall = False
+                case "left":
+                    cells[i][j].has_left_wall = False
+                    cells[choice[0]][choice[1]].has_right_wall = False
+                case "right":
+                    cells[i][j].has_right_wall = False
+                    cells[choice[0]][choice[1]].has_left_wall = False
+                case _:
+                    return
+            self.__break_walls_r(choice[0], choice[1])
+
 
     def __reset_cells_visited(self):
         for i in range(self.__num_cols):
             for j in range(self.__num_rows):
                 self.__cells[i][j].visited = False
+
+    def __is_valid_cell(self, i, j):
+        cells = self.__cells
+        if i < 0 or j < 0 or i >= self.__num_cols or j >= self.__num_rows or cells[i][j].visited is True:
+            return False
+        return True
+    
+    def __check_wall_side(self, i, j, dx, dy):
+        # L
+        if dx == i - 1:
+            return "left"
+        # R
+        if dx == i + 1:
+            return "right"
+        # U
+        if dy == j - 1:
+            return "up"
+        # D
+        if dy == j + 1:
+            return "down"
