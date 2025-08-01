@@ -27,9 +27,11 @@ class Maze:
             self.__seed = random.seed(seed)
 
         self.__cells = []
+
         self.__create_cells()
         self.__break_entrance_and_exit()
         self.__break_walls_r(0, 0)
+        self.__reset_cells_visited()
 
     def __create_cells(self):
         for i in range(self.__num_cols):
@@ -58,9 +60,10 @@ class Maze:
         if self.__win is None:
             return
         self.__win.redraw()
-    sleep(0.05)
+        sleep(0.005)
     
     def __break_entrance_and_exit(self):
+        # Deletes top and bottom walls from the first and last cell respectively
         entrance: Cell = self.__cells[0][0]
         exit: Cell = self.__cells[self.__num_cols-1][self.__num_rows-1]
         entrance.has_top_wall = False
@@ -81,7 +84,9 @@ class Maze:
                 self.__draw_cell(i, j)
                 return
             
+            # Pick a random cell from the list of adjacent ones
             choice = to_visit[random.randrange(len(to_visit))]
+            # Delete the shared wall
             match self.__check_wall_side(i, j, choice[0], choice[1]):
                 case "up":
                     cells[i][j].has_top_wall = False
@@ -107,20 +112,31 @@ class Maze:
 
     def __is_valid_cell(self, i, j):
         cells = self.__cells
+        # Checking if out of bounds or if has been visited already
         if i < 0 or j < 0 or i >= self.__num_cols or j >= self.__num_rows or cells[i][j].visited is True:
             return False
         return True
     
     def __check_wall_side(self, i, j, dx, dy):
-        # L
+        # Left
         if dx == i - 1:
             return "left"
-        # R
+        # Right
         if dx == i + 1:
             return "right"
-        # U
+        # Up
         if dy == j - 1:
             return "up"
-        # D
+        # Down
         if dy == j + 1:
             return "down"
+        
+    def solve(self):
+        self._solve_r(0,0)
+    
+    def _solve_r(self, i, j):
+        cells = self.__cells
+        max_col = self.__num_cols-1
+        max_row = self.__num_rows-1
+        goal_cell = self.cells[max_col][max_row]
+        pass
