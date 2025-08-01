@@ -1,3 +1,4 @@
+import random
 from time import sleep
 from graphics import *
 from cell import *
@@ -12,6 +13,7 @@ class Maze:
         cell_size_x,
         cell_size_y,
         win: Window = None,
+        seed = None,
     ):
         self.__x1 = x1
         self.__y1 = y1
@@ -20,6 +22,10 @@ class Maze:
         self.__cell_size_x = cell_size_x
         self.__cell_size_y = cell_size_y
         self.__win = win
+
+        if seed is not None:
+            self.__seed = random.seed(seed)
+
         self.__cells = []
         self.__create_cells()
 
@@ -52,10 +58,22 @@ class Maze:
         if self.__win is None:
             return
         self.__win.redraw()
-        sleep(0.05)
+    sleep(0.05)
     
     def __break_entrance_and_exit(self):
         entrance: Cell = self.__cells[0][0]
         exit: Cell = self.__cells[self.__num_cols-1][self.__num_rows-1]
         entrance.has_top_wall = False
         exit.has_bottom_wall = False
+    
+    def __break_walls_r(self, i, j):
+        cells = self.__cells
+        cells[i][j].visited = True
+        while True:
+            to_visit = []
+            pass
+
+    def __reset_cells_visited(self):
+        for i in range(self.__num_cols):
+            for j in range(self.__num_rows):
+                self.__cells[i][j].visited = False
