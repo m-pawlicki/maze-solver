@@ -9,11 +9,11 @@ def main():
 
     win = Window(win_width, win_height)
 
-    maze_width = 10
-    maze_height = 10
-    maze_num_col = 31
-    maze_num_row = 23
-    maze_scale = 25
+    maze_width = 5
+    maze_height = 5
+    maze_num_col = 25
+    maze_num_row = 15
+    maze_scale = 30
 
     Maze(maze_width, maze_height, maze_num_row, maze_num_col, maze_scale, maze_scale, win=win)
     win.wait_for_close()

@@ -32,6 +32,7 @@ class Maze:
         self.__break_entrance_and_exit()
         self.__break_walls_r(0, 0)
         self.__reset_cells_visited()
+        self.solve()
 
     def __create_cells(self):
         for i in range(self.__num_cols):
@@ -88,10 +89,10 @@ class Maze:
             choice = to_visit[random.randrange(len(to_visit))]
             # Delete the shared wall
             match self.__check_wall_side(i, j, choice[0], choice[1]):
-                case "up":
+                case "top":
                     cells[i][j].has_top_wall = False
                     cells[choice[0]][choice[1]].has_bottom_wall = False
-                case "down":
+                case "bottom":
                     cells[i][j].has_bottom_wall = False
                     cells[choice[0]][choice[1]].has_top_wall = False
                 case "left":
@@ -126,17 +127,40 @@ class Maze:
             return "right"
         # Up
         if dy == j - 1:
-            return "up"
+            return "top"
         # Down
         if dy == j + 1:
-            return "down"
+            return "bottom"
         
     def solve(self):
-        self._solve_r(0,0)
+        return self._solve_r(0,0)
     
     def _solve_r(self, i, j):
-        cells = self.__cells
+        self.__animate()
+        # goal cell
         max_col = self.__num_cols-1
         max_row = self.__num_rows-1
-        goal_cell = self.cells[max_col][max_row]
-        pass
+        goal_cell: Cell = self.__cells[max_col][max_row]
+        # current cell
+        current_cell: Cell= self.__cells[i][j]
+        current_cell.visited = True
+        if current_cell == goal_cell:
+            return True
+        # checking around current cell
+        offsets = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for dx,dy in offsets:
+            x = i+dx
+            y = j+dy
+            direction = self.__check_wall_side(i, j, x, y)
+            # checking if it's in bounds and not visited yet
+            if self.__is_valid_cell(x, y):
+                next_cell: Cell = self.__cells[x][y]
+                # checking if there's no wall
+                wall = getattr(current_cell, f"has_{direction}_wall")
+                if wall is False:
+                    current_cell.draw_move(next_cell)
+                    if self._solve_r(x, y):
+                        return True
+                    else:
+                        current_cell.draw_move(next_cell, undo=True)
+        return False
